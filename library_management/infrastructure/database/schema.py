@@ -1,5 +1,7 @@
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, UUID, uuid4
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, UUID
+
+from uuid import uuid4
 from library_management.infrastructure.database.engine import Base
 
 
