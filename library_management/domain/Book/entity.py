@@ -1,10 +1,22 @@
-from dataclasses import dataclass
+from datetime import datetime
 from uuid import UUID
-from datetime import date
-from typing import Any
+from typing import Optional
+from dataclasses import dataclass
 
 
-from library_management.domain.shared.base_entity import Base
+@dataclass
+class Book:
+    book_id: UUID
+    title: str
+    author: str
+    is_borrowed: bool
+    borrowed_date: Optional[datetime]
+    borrowed_by: Optional[UUID]
 
 
-# @dataclass
+@dataclass
+class Member:
+    member_id: UUID
+    name: str
+    email: str
+
