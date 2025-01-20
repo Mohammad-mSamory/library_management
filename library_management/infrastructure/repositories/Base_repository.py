@@ -1,8 +1,10 @@
 
 from typing import List,Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import UUID
 
 from library_management.infrastructure.database.schema import BookModel, MemberModel
+
 
 # Repositories (Infrastructure Layer)
 class BookRepository:

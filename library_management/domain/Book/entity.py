@@ -13,4 +13,3 @@ class Book:
     borrowed_date: Optional[datetime]
     borrowed_by: Optional[UUID]
 
-
