@@ -1,5 +1,5 @@
 from datetime import datetime
-from uuid import UUID
+from uuid import UUID, uuid4
 from typing import Optional
 from dataclasses import dataclass
 
@@ -13,10 +13,4 @@ class Book:
     borrowed_date: Optional[datetime]
     borrowed_by: Optional[UUID]
 
-
-@dataclass
-class Member:
-    member_id: UUID
-    name: str
-    email: str
 
