@@ -25,3 +25,27 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+
+ Docker compose overrides
+compose.override*
+docker-compose.override*
+
+# Compose files for other environments
+compose.*.yml
+docker-compose.*.yml
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
