@@ -15,20 +15,21 @@ class BookRepository:
         self.db.add(book)
         self.db.commit()
 
-    def get(self, book_id: int) -> Optional[BookModel]:
+    def get(self, book_id: UUID) -> Optional[BookModel]:
         return self.db.query(BookModel).filter(BookModel.book_id == book_id).first()
 
     def list(self) -> List[BookModel]:
         return self.db.query(BookModel).all()
 
-    def delete(self, book_id: int):
+    def update(self, book: BookModel):
+        self.db.commit()
+
+    def delete(self, book_id: UUID):
         book = self.get(book_id)
         if book:
             self.db.delete(book)
             self.db.commit()
 
-    def update(self, book: BookModel):
-        self.db.commit()
 
 class MemberRepository:
     def __init__(self, db: Session):
@@ -38,17 +39,17 @@ class MemberRepository:
         self.db.add(member)
         self.db.commit()
 
-    def get(self, member_id: int) -> Optional[MemberModel]:
+    def get(self, member_id: UUID) -> Optional[MemberModel]:
         return self.db.query(MemberModel).filter(MemberModel.member_id == member_id).first()
 
     def list(self) -> List[MemberModel]:
         return self.db.query(MemberModel).all()
 
-    def delete(self, member_id: int):
+    def update(self, member: MemberModel):
+        self.db.commit()
+
+    def delete(self, member_id: UUID):
         member = self.get(member_id)
         if member:
             self.db.delete(member)
             self.db.commit()
-
-    def update(self, member: MemberModel):
-        self.db.commit()

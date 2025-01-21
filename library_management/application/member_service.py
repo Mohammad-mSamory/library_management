@@ -1,15 +1,18 @@
+from uuid import UUID
 
-from library_management.infrastructure.database.schema import MemberModel
+
+from library_management.domain.Member.entity import Member
+
 
 class MemberService:
-    def __init__(self, member_repo):
-        self.member_repo = member_repo
+    def __init__(self, member_repository):
+        self.member_repository = member_repository
 
-    def add_member(self, member: MemberModel):
-        self.member_repo.add(member)
+    def add_member(self, member: Member):
+        self.member_repository.add(member)
 
-    def update_member(self, member: MemberModel):
-        self.member_repo.update(member)
+    def update_member(self, member: Member):
+        self.member_repository.update(member)
 
-    def delete_member(self, member_id: int):
-        self.member_repo.delete(member_id)
+    def delete_member(self, member_id: UUID):
+        self.member_repository.delete(member_id)
