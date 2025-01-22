@@ -14,7 +14,7 @@ member_service = MemberService(member_repo)
 
 @router.post("/", response_model=Member)
 def add_member(member_data: MemberCreate):
-    new_member = member_service.add_member(member_data.dict())
+    new_member = member_service.add_member(member_data.model_dump())
     if not new_member:
         raise HTTPException(status_code=400, detail="Member not added.")
     return new_member
@@ -35,7 +35,7 @@ def get_member(member_id: UUID):
 
 @router.put("/{member_id}", response_model=Member)
 def update_member(member_id: UUID, member_data: MemberUpdate):
-    updated_member = member_service.update_member(member_id, member_data.dict())
+    updated_member = member_service.update_member(member_id, member_data.model_dump())
     if not updated_member:
         raise HTTPException(status_code=404, detail="Member not found.")
     return updated_member

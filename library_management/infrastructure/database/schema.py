@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 
 from uuid import uuid4
-from library_management.infrastructure.database.engine import metadata
+from library_management.infrastructure.database.engine import metadata, engine
 
 
 # Book Table
@@ -32,3 +32,6 @@ members_table = Table(
     Column("name", String, nullable=False),
     Column("email", String, nullable=False, unique=True),
 )
+
+
+metadata.create_all(engine)

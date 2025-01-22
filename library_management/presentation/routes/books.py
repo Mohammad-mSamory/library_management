@@ -14,7 +14,7 @@ book_service = BookService(book_repo)
 
 @router.post("/", response_model=Book)
 def add_book(book_data: BookCreate):
-    new_book = book_service.add_book(book_data.dict())
+    new_book = book_service.add_book(book_data.model_dump())
     if not new_book:
         raise HTTPException(status_code=400, detail="Book not added.")
     return new_book
@@ -35,7 +35,7 @@ def get_book(book_id: UUID):
 
 @router.put("/{book_id}", response_model=Book)
 def update_book(book_id: UUID, book_data: BookUpdate):
-    updated_book = book_service.update_book(book_id, book_data.dict())
+    updated_book = book_service.update_book(book_id, book_data.model_dump())
     if not updated_book:
         raise HTTPException(status_code=404, detail="Book not found.")
     return updated_book
