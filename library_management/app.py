@@ -5,12 +5,10 @@ from library_management.presentation.routes.borrowing import router as borrowing
 
 app = FastAPI()
 
-
-
+# Include the routers
 app.include_router(books_router, prefix="/books", tags=["Books"])
 app.include_router(members_router, prefix="/members", tags=["Members"])
 app.include_router(borrowing_router, prefix="/borrow", tags=["Borrowing"])
-
 
 @app.get("/")
 def read_root():

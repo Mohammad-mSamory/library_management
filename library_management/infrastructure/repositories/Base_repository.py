@@ -1,55 +1,57 @@
-
-from typing import List,Optional
-from sqlalchemy.orm import Session
-from sqlalchemy import UUID
-
-from library_management.infrastructure.database.schema import BookModel, MemberModel
+from sqlalchemy import Table, insert, select, update, delete
+from library_management.infrastructure.database.engine import engine
+from library_management.infrastructure.database.schema import books_table , members_table
 
 
-# Repositories (Infrastructure Layer)
 class BookRepository:
-    def __init__(self, db: Session):
-        self.db = db
+    def add(self, book_data: dict):
+        with engine.connect() as conn:
+            stmt = insert(books_table).values(book_data).returning(books_table)
+            return conn.execute(stmt).fetchone()
 
-    def add(self, book: BookModel):
-        self.db.add(book)
-        self.db.commit()
+    def get(self, book_id: int):
+        with engine.connect() as conn:
+            stmt = select(books_table).where(books_table.c.book_id == book_id)
+            return conn.execute(stmt).fetchone()
 
-    def get(self, book_id: UUID) -> Optional[BookModel]:
-        return self.db.query(BookModel).filter(BookModel.book_id == book_id).first()
+    def list(self):
+        with engine.connect() as conn:
+            stmt = select(books_table)
+            return conn.execute(stmt).fetchall()
 
-    def list(self) -> List[BookModel]:
-        return self.db.query(BookModel).all()
+    def update(self, book_id: int, book_data: dict):
+        with engine.connect() as conn:
+            stmt = update(books_table).where(books_table.c.book_id == book_id).values(book_data)
+            conn.execute(stmt)
 
-    def update(self, book: BookModel):
-        self.db.commit()
-
-    def delete(self, book_id: UUID):
-        book = self.get(book_id)
-        if book:
-            self.db.delete(book)
-            self.db.commit()
+    def delete(self, book_id: int):
+        with engine.connect() as conn:
+            stmt = delete(books_table).where(books_table.c.book_id == book_id)
+            conn.execute(stmt)
 
 
 class MemberRepository:
-    def __init__(self, db: Session):
-        self.db = db
+    def add(self, member_data: dict):
+        with engine.connect() as conn:
+            stmt = insert(members_table).values(member_data).returning(members_table)
+            return conn.execute(stmt).fetchone()
 
-    def add(self, member: MemberModel):
-        self.db.add(member)
-        self.db.commit()
+    def get(self, member_id: int):
+        with engine.connect() as conn:
+            stmt = select(members_table).where(members_table.c.member_id == member_id)
+            return conn.execute(stmt).fetchone()
 
-    def get(self, member_id: UUID) -> Optional[MemberModel]:
-        return self.db.query(MemberModel).filter(MemberModel.member_id == member_id).first()
+    def list(self):
+        with engine.connect() as conn:
+            stmt = select(members_table)
+            return conn.execute(stmt).fetchall()
 
-    def list(self) -> List[MemberModel]:
-        return self.db.query(MemberModel).all()
+    def update(self, member_id: int, member_data: dict):
+        with engine.connect() as conn:
+            stmt = update(members_table).where(members_table.c.member_id == member_id).values(member_data)
+            conn.execute(stmt)
 
-    def update(self, member: MemberModel):
-        self.db.commit()
-
-    def delete(self, member_id: UUID):
-        member = self.get(member_id)
-        if member:
-            self.db.delete(member)
-            self.db.commit()
+    def delete(self, member_id: int):
+        with engine.connect() as conn:
+            stmt = delete(members_table).where(members_table.c.member_id == member_id)
+            conn.execute(stmt)

@@ -1,41 +1,29 @@
-from fastapi import APIRouter, Depends, HTTPException
-from library_management.infrastructure.database.engine import get_db
-from library_management.infrastructure.repositories.Base_repository import BookRepository, MemberRepository
+from fastapi import APIRouter, HTTPException
+from library_management.infrastructure.repositories.Base_repository import BookRepository
 from library_management.application.book_service import BookService
-from sqlalchemy.orm import Session
+
+from uuid import UUID
 
 router = APIRouter()
 
+# Initialize service
+book_repo = BookRepository()
+book_service = BookService(book_repo)
+
+
 @router.post("/{book_id}/{member_id}")
-def borrow_book(book_id: int, member_id: int, db: Session = Depends(get_db)):
-    book_repo = BookRepository(db)
-    member_repo = MemberRepository(db)
+def borrow_book(book_id: UUID, member_id: UUID):
+    try:
+        book_service.borrow_book(book_id, member_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"detail": "Book borrowed successfully."}
 
-    # Check if the book exists
-    book = book_repo.get(book_id)
-    if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
-
-    # Check if the member exists
-    member = member_repo.get(member_id)
-    if not member:
-        raise HTTPException(status_code=404, detail="Member not found")
-
-    # Perform borrow operation
-    book_service = BookService(book_repo)
-    book_service.borrow_book(book_id, member_id)
-    return {"message": "Book borrowed successfully"}
 
 @router.post("/return/{book_id}")
-def return_book(book_id: int, db: Session = Depends(get_db)):
-    book_repo = BookRepository(db)
-
-    # Check if the book exists
-    book = book_repo.get(book_id)
-    if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
-
-    # Perform return operation
-    book_service = BookService(book_repo)
-    book_service.return_book(book_id)
-    return {"message": "Book returned successfully"}
+def return_book(book_id: UUID):
+    try:
+        book_service.return_book(book_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"detail": "Book returned successfully."}

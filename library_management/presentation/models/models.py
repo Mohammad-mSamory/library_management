@@ -1,23 +1,38 @@
 
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, UUID4
 
 
 
-# Pydantic Models for Validation
-class BookIn(BaseModel):
+# Pydantic Models for Book
+class BookBase(BaseModel):
     title: str
     author: str
+    is_borrowed: bool = False
+    borrowed_date: Optional[str] = None
+    borrowed_by: Optional[UUID4] = None
 
-class BookOut(BookIn):
-    book_id: int
-    is_borrowed: bool
-    borrowed_date: Optional[str]
-    borrowed_by: Optional[int]
+class BookCreate(BookBase):
+    pass
 
-class MemberIn(BaseModel):
+class BookUpdate(BookBase):
+    pass
+
+class Book(BookBase):
+    book_id: UUID4
+
+
+# Pydantic Models for Member
+class MemberBase(BaseModel):
     name: str
     email: EmailStr
 
-class MemberOut(MemberIn):
-    member_id: int
+class MemberCreate(MemberBase):
+    pass
+
+class MemberUpdate(MemberBase):
+    pass
+
+class Member(MemberBase):
+    member_id: UUID4
+
