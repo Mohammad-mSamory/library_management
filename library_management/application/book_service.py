@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timezone
 from uuid import UUID
 
 from library_management.infrastructure.repositories.Base_repository import \
@@ -29,7 +29,7 @@ class BookService:
         if book["is_borrowed"]:
             raise ValueError("Book is already borrowed")
         book["is_borrowed"] = True
-        book["borrowed_date"] = datetime.utcnow()
+        book["borrowed_date"] = datetime.now(timezone.utc).isoformat()
         book["borrowed_by"] = member_id
         return self.book_repo.update(book_id, book)
 
