@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy import delete, insert, select, update
 
 from library_management.infrastructure.database.engine import engine
@@ -11,7 +13,7 @@ class BookRepository:
             stmt = insert(books_table).values(book_data).returning(books_table)
             return conn.execute(stmt).fetchone()
 
-    def get(self, book_id: int):
+    def get(self, book_id: UUID):
         with engine.connect() as conn:
             stmt = select(books_table).where(books_table.c.book_id == book_id)
             return conn.execute(stmt).fetchone()
@@ -21,13 +23,13 @@ class BookRepository:
             stmt = select(books_table)
             return conn.execute(stmt).fetchall()
 
-    def update(self, book_id: int, book_data: dict):
+    def update(self, book_id: UUID, book_data: dict):
         with engine.connect() as conn:
             stmt = update(books_table).where(
                 books_table.c.book_id == book_id).values(book_data)
             conn.execute(stmt)
 
-    def delete(self, book_id: int):
+    def delete(self, book_id: UUID):
         with engine.connect() as conn:
             stmt = delete(books_table).where(books_table.c.book_id == book_id)
             conn.execute(stmt)
@@ -40,7 +42,7 @@ class MemberRepository:
                 member_data).returning(members_table)
             return conn.execute(stmt).fetchone()
 
-    def get(self, member_id: int):
+    def get(self, member_id: UUID):
         with engine.connect() as conn:
             stmt = select(members_table).where(
                 members_table.c.member_id == member_id)
@@ -51,13 +53,13 @@ class MemberRepository:
             stmt = select(members_table)
             return conn.execute(stmt).fetchall()
 
-    def update(self, member_id: int, member_data: dict):
+    def update(self, member_id: UUID, member_data: dict):
         with engine.connect() as conn:
             stmt = update(members_table).where(
                 members_table.c.member_id == member_id).values(member_data)
             conn.execute(stmt)
 
-    def delete(self, member_id: int):
+    def delete(self, member_id: UUID):
         with engine.connect() as conn:
             stmt = delete(members_table).where(
                 members_table.c.member_id == member_id)

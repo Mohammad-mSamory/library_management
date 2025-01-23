@@ -15,6 +15,5 @@ app.include_router(borrowing_router, prefix="/borrow", tags=["Borrowing"])
 
 
 @app.get("/")
-
 def read_root():
     return {"message": "Hello, World!"}

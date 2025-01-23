@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from library_management.infrastructure.repositories.Base_repository import \
     BookRepository
@@ -11,19 +12,19 @@ class BookService:
     def add_book(self, book_data: dict):
         return self.book_repo.add(book_data)
 
-    def get_book(self, book_id: int):
+    def get_book(self, book_id: UUID):
         return self.book_repo.get(book_id)
 
     def list_books(self):
         return self.book_repo.list()
 
-    def update_book(self, book_id: int, book_data: dict):
+    def update_book(self, book_id: UUID, book_data: dict):
         return self.book_repo.update(book_id, book_data)
 
-    def delete_book(self, book_id: int):
+    def delete_book(self, book_id: UUID):
         return self.book_repo.delete(book_id)
 
-    def borrow_book(self, book_id: int, member_id: int):
+    def borrow_book(self, book_id: UUID, member_id: UUID):
         book = self.book_repo.get(book_id)
         if book["is_borrowed"]:
             raise ValueError("Book is already borrowed")
@@ -32,7 +33,7 @@ class BookService:
         book["borrowed_by"] = member_id
         return self.book_repo.update(book_id, book)
 
-    def return_book(self, book_id: int):
+    def return_book(self, book_id: UUID):
         book = self.book_repo.get(book_id)
         if not book["is_borrowed"]:
             raise ValueError("Book is not currently borrowed")
