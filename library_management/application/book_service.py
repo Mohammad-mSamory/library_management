@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from library_management.infrastructure.repositories.Base_repository import BookRepository
+from library_management.infrastructure.repositories.Base_repository import \
+    BookRepository
+
 
 class BookService:
     def __init__(self, book_repo: BookRepository):
@@ -38,5 +40,3 @@ class BookService:
         book["borrowed_date"] = None
         book["borrowed_by"] = None
         return self.book_repo.update(book_id, book)
-
-

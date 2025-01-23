@@ -1,9 +1,14 @@
-from fastapi import APIRouter, HTTPException
 from typing import List
-from library_management.presentation.models.models import Member, MemberCreate, MemberUpdate
-from library_management.application.member_service import MemberService
-from library_management.infrastructure.repositories.Base_repository import MemberRepository
 from uuid import UUID
+
+from fastapi import APIRouter, HTTPException
+
+from library_management.application.member_service import MemberService
+from library_management.infrastructure.repositories.Base_repository import \
+    MemberRepository
+from library_management.presentation.models.models import (Member,
+                                                           MemberCreate,
+                                                           MemberUpdate)
 
 router = APIRouter()
 
@@ -35,7 +40,8 @@ def get_member(member_id: UUID):
 
 @router.put("/{member_id}", response_model=Member)
 def update_member(member_id: UUID, member_data: MemberUpdate):
-    updated_member = member_service.update_member(member_id, member_data.model_dump())
+    updated_member = member_service.update_member(
+        member_id, member_data.model_dump())
     if not updated_member:
         raise HTTPException(status_code=404, detail="Member not found.")
     return updated_member

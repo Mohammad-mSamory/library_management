@@ -1,4 +1,6 @@
-from library_management.infrastructure.repositories.Base_repository import MemberRepository
+from library_management.infrastructure.repositories.Base_repository import \
+    MemberRepository
+
 
 class MemberService:
     def __init__(self, member_repo: MemberRepository):

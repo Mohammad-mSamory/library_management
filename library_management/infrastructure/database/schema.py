@@ -1,16 +1,9 @@
 
-from sqlalchemy import (
-    Table,
-    Column,
-    String,
-    Boolean,
-    DateTime,
-    UUID,
-)
-
 from uuid import uuid4
-from library_management.infrastructure.database.engine import metadata, engine
 
+from sqlalchemy import UUID, Boolean, Column, DateTime, String, Table
+
+from library_management.infrastructure.database.engine import engine, metadata
 
 # Book Table
 books_table = Table(
