@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  library-base:
+    build:
+      context: .
+    image: library
+    container_name: library-base
+    volumes:  # this to bind from local dir to container dir / ask more about this 
+      - ./src:/app/src:rw
+    environment:
+      - DB_HOST=library-postgres
+      - DB_NAME=library_management
+      - DB_PASSWORD=mohapass
+      - DB_PORT=5432
+      - DB_USER=mohasam2
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - VIRTUAL_HOST=library.docker
+    command: ['echo', 'I only exist to be extended']
+
+  library:
+    extends: library-base
+    container_name: library
+    ports:
+      - 8000:8000 
+    depends_on:
+      - library-postgres
+    command: ["uvicorn", "library_management.app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  library-postgres:
+    image: postgres:13
+    container_name: library-postgres
+    ports:
+      - 5432:5432  
+    environment:
+      - POSTGRES_DB=library_management
+      - POSTGRES_USER=mohasam2
+      - POSTGRES_PASSWORD=mohapass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+volumes:
+  postgres_data:

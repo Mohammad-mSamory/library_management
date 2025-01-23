@@ -1,5 +1,8 @@
 # Use the official Python image from Docker Hub
-FROM python:3.10-slim
+FROM python:3.13-alpine
+
+# Update and install system dependencies
+RUN apk add --no-cache libpq-dev gcc musl-dev
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code into the container
-COPY . .
+COPY . /app
 
 # Expose the port FastAPI runs on
 EXPOSE 8000
