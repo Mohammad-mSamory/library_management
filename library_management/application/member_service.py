@@ -1,24 +1,43 @@
-from uuid import UUID
+from uuid import UUID, uuid4
 
-from library_management.infrastructure.repositories.Base_repository import \
-    MemberRepository
 
+from library_management.domain.Member.entity import Member
+from library_management.infrastructure.repositories.Base_repository import MemberRepository 
 
 class MemberService:
-    def __init__(self, member_repo: MemberRepository):
-        self.member_repo = member_repo
+    def __init__(self, repository):
+        self.repo = repository
 
-    def add_member(self, member_data: dict):
-        return self.member_repo.add(member_data)
+    def add_member(self, data: dict) -> Member:
+        """Create new member from a dictionary"""
+        new_member = Member(
+            member_id=uuid4(),  
+            name=data["name"],
+            email=data["email"]
+        )
+        return self.repo.add(new_member)
 
-    def get_member(self, member_id: UUID):
-        return self.member_repo.get(member_id)
+    def update_member(self, member_id: UUID, data: dict) -> Member:
+        """Update member from a dictionary"""
+        member = self.repo.get(member_id)
+        if not member:
+            raise ValueError("Member not found")
+        
+        if "name" in data: member.name = data["name"]
+        if "email" in data: member.email = data["email"]
+        
+        return self.repo.update(member)
+    
+    def get_member(self, member_id: UUID) -> Member:
+        member = self.repo.get(member_id)
+        if not member:
+            raise ValueError("Member not found")
+        return member
 
-    def list_members(self):
-        return self.member_repo.list()
+    def list_members(self) -> list[Member]:
+        return self.repo.list()
 
-    def update_member(self, member_id: UUID, member_data: dict):
-        return self.member_repo.update(member_id, member_data)
-
-    def delete_member(self, member_id: UUID):
-        return self.member_repo.delete(member_id)
+    def delete_member(self, member_id: UUID) -> None:
+        if not self.repo.get(member_id):
+            raise ValueError("Member not found")
+        self.repo.delete(member_id)

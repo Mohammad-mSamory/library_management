@@ -1,66 +1,69 @@
 from uuid import UUID
-
 from sqlalchemy import delete, insert, select, update
-
 from library_management.infrastructure.database.engine import engine
-from library_management.infrastructure.database.schema import (books_table,
-                                                               members_table)
 
 
-class BookRepository:
-    def add(self, book_data: dict):
+class BaseRepository:
+    def __init__(self, table, entity_type, pk_column):
+        self.table = table
+        self.entity_type = entity_type
+        self.pk_column = pk_column  # "book_id" or "member_id"
+
+    def _convert_to_entity(self, data):
+        return self.entity_type.from_dict(dict(data)) if data else None
+    
+    def add(self, entity):
         with engine.connect() as conn:
-            stmt = insert(books_table).values(book_data).returning(books_table)
-            return conn.execute(stmt).fetchone()
+            stmt = insert(self.table).values(**entity.to_dict())
+            conn.execute(stmt)
+            conn.commit()  
+        return entity  
 
-    def get(self, book_id: UUID):
-        with engine.connect() as conn:
-            stmt = select(books_table).where(books_table.c.book_id == book_id)
-            return conn.execute(stmt).fetchone()
+    def get(self, entity_id: UUID):
+        with self.engine.connect() as conn:
+            stmt = select(self.table).where(
+                getattr(self.table.c, self.pk_column) == entity_id
+            )
+            result = conn.execute(stmt)
+            return self._convert_to_entity(result.fetchone())
 
-    def list(self):
+ 
+    def list_all(self):
         with engine.connect() as conn:
-            stmt = select(books_table)
-            return conn.execute(stmt).fetchall()
+            result = conn.execute(select(self.table))
+            return [self._convert_to_entity(row) for row in result]
 
-    def update(self, book_id: UUID, book_data: dict):
+    def update(self, entity):
         with engine.connect() as conn:
-            stmt = update(books_table).where(
-                books_table.c.book_id == book_id).values(book_data)
+            stmt = (
+                update(self.table)
+                .where(self.table.c.book_id == entity.book_id)
+                .values(entity.to_dict())
+            )
+            conn.execute(stmt)
+            return entity
+
+    def delete(self, entity_id: UUID):
+        with engine.connect() as conn:
+            stmt = delete(self.table).where(self.table.c.book_id == entity_id)
             conn.execute(stmt)
 
-    def delete(self, book_id: UUID):
-        with engine.connect() as conn:
-            stmt = delete(books_table).where(books_table.c.book_id == book_id)
-            conn.execute(stmt)
+class BookRepository(BaseRepository):
+    def __init__(self):
+        from library_management.infrastructure.database.schema import books_table
+        from library_management.domain.Book.entity import Book
+        super().__init__(
+            table=books_table,
+            entity_type=Book,
+            pk_column="book_id"  
+        )
 
-
-class MemberRepository:
-    def add(self, member_data: dict):
-        with engine.connect() as conn:
-            stmt = insert(members_table).values(
-                member_data).returning(members_table)
-            return conn.execute(stmt).fetchone()
-
-    def get(self, member_id: UUID):
-        with engine.connect() as conn:
-            stmt = select(members_table).where(
-                members_table.c.member_id == member_id)
-            return conn.execute(stmt).fetchone()
-
-    def list(self):
-        with engine.connect() as conn:
-            stmt = select(members_table)
-            return conn.execute(stmt).fetchall()
-
-    def update(self, member_id: UUID, member_data: dict):
-        with engine.connect() as conn:
-            stmt = update(members_table).where(
-                members_table.c.member_id == member_id).values(member_data)
-            conn.execute(stmt)
-
-    def delete(self, member_id: UUID):
-        with engine.connect() as conn:
-            stmt = delete(members_table).where(
-                members_table.c.member_id == member_id)
-            conn.execute(stmt)
+class MemberRepository(BaseRepository):
+    def __init__(self):
+        from library_management.infrastructure.database.schema import members_table
+        from library_management.domain.Member.entity import Member
+        super().__init__(
+            table=members_table,
+            entity_type=Member,
+            pk_column="member_id"  
+        )

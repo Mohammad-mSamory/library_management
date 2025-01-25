@@ -1,5 +1,6 @@
 
-from typing import Optional
+from datetime import datetime
+
 
 from pydantic import UUID4, BaseModel, EmailStr
 
@@ -9,16 +10,19 @@ class BookBase(BaseModel):
     title: str
     author: str
     is_borrowed: bool = False
-    borrowed_date: Optional[str] = None
-    borrowed_by: Optional[UUID4] = None
+    borrowed_date: datetime | None = None
+    borrowed_by: UUID4 | None = None
 
 
 class BookCreate(BookBase):
-    pass
+    title: str
+    author: str
 
 
 class BookUpdate(BookBase):
-    pass
+    is_borrowed: bool | None = None
+    borrowed_date: datetime | None = None
+    borrowed_by: UUID4 | None = None
 
 
 class Book(BookBase):
@@ -32,11 +36,13 @@ class MemberBase(BaseModel):
 
 
 class MemberCreate(MemberBase):
-    pass
+    name: str
+    email: EmailStr
 
 
 class MemberUpdate(MemberBase):
-    pass
+    name: str | None = None
+    email: EmailStr | None = None
 
 
 class Member(MemberBase):
