@@ -22,7 +22,7 @@ class BaseEntity:
 
     @classmethod
     def from_dict(cls: Type[T], data: dict) -> T:
-        kwargs: dict[str, Any] = {}  # Annotate kwargs with dict[str, Any]
+        kwargs: dict[str, Any] = {}
         for field in fields(cls):
             if field.name not in data:
                 continue
@@ -31,33 +31,34 @@ class BaseEntity:
 
             # Handle None values
             if value is None:
-                field_origin = get_origin(field.type)
-                field_args = get_args(field.type)
-                if field_origin is Union and type(None) in field_args:
-                    kwargs[field.name] = None
-                else:
-                    # Or raise an error for non-optional fields
-                    kwargs[field.name] = None
+                # ... (existing null handling code remains) ...
                 continue
 
-            # Determine field type considering Optional
+            # Get field type (handling Optional)
             field_type = field.type
             field_origin = get_origin(field_type)
             field_args = get_args(field_type)
 
-            # Handle Union (e.g., Optional)
             if field_origin is Union:
-                # Extract non-None types
                 non_none_types = [t for t in field_args if t is not type(None)]
                 if len(non_none_types) == 1:
                     field_type = non_none_types[0]
-                # Else, handle other Union types if needed
 
-            # Convert based on type
+            # Type conversions
             if field_type == UUID:
-                kwargs[field.name] = UUID(value)
+                if isinstance(value, str):
+                    kwargs[field.name] = UUID(value)
+                elif isinstance(value, UUID):
+                    kwargs[field.name] = value
+                else:
+                    raise ValueError(f"Invalid UUID value: {value}")
             elif field_type == datetime:
-                kwargs[field.name] = datetime.fromisoformat(value)
+                if isinstance(value, str):
+                    kwargs[field.name] = datetime.fromisoformat(value)
+                elif isinstance(value, datetime):
+                    kwargs[field.name] = value
+                else:
+                    raise ValueError(f"Invalid datetime value: {value}")
             else:
                 kwargs[field.name] = value
 

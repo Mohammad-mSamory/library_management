@@ -12,7 +12,9 @@ class BaseRepository:
         self.pk_column = pk_column  # "book_id" or "member_id"
 
     def _convert_to_entity(self, data):
-        return self.entity_type.from_dict(dict(data)) if data else None
+        if not data:
+            return None
+        return self.entity_type.from_dict(data._asdict())
 
     def add(self, entity):
         with engine.connect() as conn:
@@ -38,16 +40,23 @@ class BaseRepository:
         with engine.connect() as conn:
             stmt = (
                 update(self.table)
-                .where(self.table.c.book_id == entity.book_id)
+                .where(
+                    getattr(self.table.c, self.pk_column) ==
+                    getattr(entity, self.pk_column)
+                )
                 .values(entity.to_dict())
             )
             conn.execute(stmt)
-            return entity
+            conn.commit()
+        return entity
 
     def delete(self, entity_id: UUID):
         with engine.connect() as conn:
-            stmt = delete(self.table).where(self.table.c.book_id == entity_id)
+            stmt = delete(self.table).where(
+                getattr(self.table.c, self.pk_column) == entity_id
+            )
             conn.execute(stmt)
+            conn.commit()
 
 
 class BookRepository(BaseRepository):
