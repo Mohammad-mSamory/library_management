@@ -27,4 +27,4 @@ members_table = Table(
 )
 
 
-metadata.create_all(engine)
+
