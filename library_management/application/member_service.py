@@ -36,7 +36,7 @@ class MemberService:
         return member
 
     def list_members(self) -> list[Member]:
-        return self.repo.list()
+        return self.repo.list_all()
 
     def delete_member(self, member_id: UUID) -> None:
         if not self.repo.get(member_id):
