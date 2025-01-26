@@ -1,8 +1,7 @@
 from uuid import UUID, uuid4
 
-
 from library_management.domain.Member.entity import Member
-from library_management.infrastructure.repositories.Base_repository import MemberRepository 
+
 
 class MemberService:
     def __init__(self, repository):
@@ -11,7 +10,7 @@ class MemberService:
     def add_member(self, data: dict) -> Member:
         """Create new member from a dictionary"""
         new_member = Member(
-            member_id=uuid4(),  
+            member_id=uuid4(),
             name=data["name"],
             email=data["email"]
         )
@@ -22,12 +21,14 @@ class MemberService:
         member = self.repo.get(member_id)
         if not member:
             raise ValueError("Member not found")
-        
-        if "name" in data: member.name = data["name"]
-        if "email" in data: member.email = data["email"]
-        
+
+        if "name" in data:
+            member.name = data["name"]
+        if "email" in data:
+            member.email = data["email"]
+
         return self.repo.update(member)
-    
+
     def get_member(self, member_id: UUID) -> Member:
         member = self.repo.get(member_id)
         if not member:

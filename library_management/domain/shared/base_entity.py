@@ -1,9 +1,10 @@
 from dataclasses import dataclass, fields
 from datetime import datetime
-from typing import Any, Type, TypeVar, get_origin, get_args, Union
+from typing import Any, Type, TypeVar, Union, get_args, get_origin
 from uuid import UUID
 
 T = TypeVar('T', bound='BaseEntity')
+
 
 @dataclass
 class BaseEntity:
@@ -21,29 +22,43 @@ class BaseEntity:
 
     @classmethod
     def from_dict(cls: Type[T], data: dict) -> T:
-        kwargs = {}
+        kwargs: dict[str, Any] = {}  # Annotate kwargs with dict[str, Any]
         for field in fields(cls):
-            value = data.get(field.name)
-            
-            # Handle field presence (even for falsy values)
             if field.name not in data:
-                continue  
-            
-            # Extract type metadata
+                continue
+
+            value = data.get(field.name)
+
+            # Handle None values
+            if value is None:
+                field_origin = get_origin(field.type)
+                field_args = get_args(field.type)
+                if field_origin is Union and type(None) in field_args:
+                    kwargs[field.name] = None
+                else:
+                    # Or raise an error for non-optional fields
+                    kwargs[field.name] = None
+                continue
+
+            # Determine field type considering Optional
             field_type = field.type
-            origin = get_origin(field_type)
-            args = get_args(field_type)
-            
-            # Handle Optional[UUID], Union, etc.
-            if origin is Union and type(None) in args:
-                field_type = args[0]  
-            
+            field_origin = get_origin(field_type)
+            field_args = get_args(field_type)
+
+            # Handle Union (e.g., Optional)
+            if field_origin is Union:
+                # Extract non-None types
+                non_none_types = [t for t in field_args if t is not type(None)]
+                if len(non_none_types) == 1:
+                    field_type = non_none_types[0]
+                # Else, handle other Union types if needed
+
             # Convert based on type
             if field_type == UUID:
-                kwargs[field.name] = UUID(value) if value else None
+                kwargs[field.name] = UUID(value)
             elif field_type == datetime:
                 kwargs[field.name] = datetime.fromisoformat(value)
             else:
                 kwargs[field.name] = value
-        
-        return cls(**kwargs) 
+
+        return cls(**kwargs)

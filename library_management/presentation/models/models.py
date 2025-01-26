@@ -1,7 +1,6 @@
 
 from datetime import datetime
 
-
 from pydantic import UUID4, BaseModel, EmailStr
 
 
@@ -20,7 +19,7 @@ class BookCreate(BookBase):
 
 
 class BookUpdate(BookBase):
-    is_borrowed: bool | None = None
+    is_borrowed: bool = False
     borrowed_date: datetime | None = None
     borrowed_by: UUID4 | None = None
 
@@ -41,8 +40,8 @@ class MemberCreate(MemberBase):
 
 
 class MemberUpdate(MemberBase):
-    name: str | None = None
-    email: EmailStr | None = None
+    name: str
+    email: EmailStr
 
 
 class Member(MemberBase):
