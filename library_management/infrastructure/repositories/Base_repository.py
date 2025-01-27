@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -8,7 +9,7 @@ from library_management.infrastructure.database.engine import engine
 class DatabaseError(Exception):
     """Custom exception for database-related errors."""
 
-    def __init__(self, message="An error occurred with the database operation"):
+    def __init__(self, message="error occurred with the database operation"):
         self.message = message
         super().__init__(self.message)
 
@@ -87,7 +88,8 @@ class BaseRepository:
 class BookRepository(BaseRepository):
     def __init__(self):
         from library_management.domain.Book.entity import Book
-        from library_management.infrastructure.database.schema import books_table
+        from library_management.infrastructure.database.schema import \
+            books_table
         super().__init__(
             table=books_table,
             entity_type=Book,
@@ -98,7 +100,8 @@ class BookRepository(BaseRepository):
 class MemberRepository(BaseRepository):
     def __init__(self):
         from library_management.domain.Member.entity import Member
-        from library_management.infrastructure.database.schema import members_table
+        from library_management.infrastructure.database.schema import \
+            members_table
         super().__init__(
             table=members_table,
             entity_type=Member,
