@@ -1,9 +1,8 @@
-from datetime import datetime, timezone
 from uuid import uuid4
 
 from sqlalchemy import UUID, Boolean, Column, DateTime, String, Table
 
-from library_management.infrastructure.database.engine import engine, metadata
+from library_management.infrastructure.database.engine import metadata
 
 # Book Table
 books_table = Table(
@@ -15,6 +14,10 @@ books_table = Table(
     Column("is_borrowed", Boolean, default=False),
     Column("borrowed_date", DateTime, nullable=True),
     Column("borrowed_by", UUID(as_uuid=True), nullable=True),
+    Column('created_by', UUID(as_uuid=True), nullable=True),
+    Column('created_at',  DateTime, nullable=True),
+    Column('updated_by', UUID(as_uuid=True), nullable=True),
+    Column('updated_at',  DateTime, nullable=True),
 )
 
 # Member Table
@@ -24,5 +27,8 @@ members_table = Table(
     Column("member_id", UUID(as_uuid=True), primary_key=True, default=uuid4),
     Column("name", String, nullable=False),
     Column("email", String, nullable=False, unique=True),
+    Column('created_by', UUID(as_uuid=True), nullable=True),
+    Column('created_at', DateTime, nullable=True),
+    Column('updated_by', UUID(as_uuid=True), nullable=True),
+    Column('updated_at', DateTime, nullable=True),
 )
-

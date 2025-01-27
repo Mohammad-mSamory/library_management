@@ -29,20 +29,26 @@ class BookService:
             author=data["author"],
             is_borrowed=is_borrowed,
             borrowed_date=borrowed_date,
-            borrowed_by=borrowed_by
+            borrowed_by=borrowed_by,
+            created_by=data["created_by"],
+            created_at=data.get("created_at", datetime.now(timezone.utc)),
+            updated_by=data["updated_by"],
+            updated_at=data.get("updated_at", datetime.now(timezone.utc))
         )
         return self.repo.add(new_book)
 
     def update_book(self, book_id: UUID, data: dict) -> Book:
-
         book = self.repo.get(book_id)
         if not book:
             raise ValueError("Book not found")
 
-        if "title" in data:
-            book.title = data["title"]
-        if "author" in data:
-            book.author = data["author"]
+        for key, value in data.items():
+            if hasattr(book, key) and value is not None:
+                setattr(book, key, value)
+
+        # Ensure that the `updated_at` field is set if not provided
+        if "updated_at" not in data:
+            book.updated_at = datetime.now(timezone.utc)
 
         return self.repo.update(book)
 
@@ -79,6 +85,7 @@ class BookService:
         return self.repo.list_all()
 
     def delete_book(self, book_id: UUID) -> None:
-        if not self.repo.get(book_id):
+        book = self.repo.get(book_id)
+        if not book:
             raise ValueError("Book not found")
         self.repo.delete(book_id)

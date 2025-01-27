@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
 from library_management.domain.Member.entity import Member
@@ -8,11 +9,15 @@ class MemberService:
         self.repo = repository
 
     def add_member(self, data: dict) -> Member:
-        """Create new member from a dictionary"""
+
         new_member = Member(
             member_id=uuid4(),
             name=data["name"],
-            email=data["email"]
+            email=data["email"],
+            created_by=data["created_by"],
+            created_at=data.get("created_at", datetime.now(timezone.utc)),
+            updated_by=data["updated_by"],
+            updated_at=data.get("updated_at", datetime.now(timezone.utc))
         )
         return self.repo.add(new_member)
 
@@ -22,10 +27,13 @@ class MemberService:
         if not member:
             raise ValueError("Member not found")
 
-        if "name" in data:
-            member.name = data["name"]
-        if "email" in data:
-            member.email = data["email"]
+        for key, value in data.items():
+            if hasattr(member, key) and value is not None:
+                setattr(member, key, value)
+
+        # Ensure that the `updated_at` field is set if not provided
+        if "updated_at" not in data:
+            member.updated_at = datetime.now(timezone.utc)
 
         return self.repo.update(member)
 

@@ -1,5 +1,4 @@
 from sqlalchemy import MetaData, create_engine
-from sqlalchemy.exc import OperationalError
 
 from library_management.configs import env
 
@@ -14,5 +13,3 @@ engine = create_engine(get_db_url())
 
 
 metadata = MetaData()
-
-

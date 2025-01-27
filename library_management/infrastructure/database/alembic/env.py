@@ -3,7 +3,8 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from library_management.infrastructure.database.engine import metadata
+from library_management.infrastructure.database.engine import get_db_url
+from library_management.infrastructure.database.schema import metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -19,6 +20,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = metadata
+target_url = get_db_url()
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -38,7 +40,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = target_url
     context.configure(
         url=url,
         target_metadata=target_metadata,

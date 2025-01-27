@@ -11,6 +11,10 @@ class BookBase(BaseModel):
     is_borrowed: bool = False
     borrowed_date: datetime | None = None
     borrowed_by: UUID4 | None = None
+    created_by: UUID4 | None = None
+    created_at: datetime
+    updated_by: UUID4 | None = None
+    updated_at: datetime | None = None
 
 
 class BookCreate(BookBase):
@@ -32,6 +36,10 @@ class Book(BookBase):
 class MemberBase(BaseModel):
     name: str
     email: EmailStr
+    created_by: UUID4 | None = None
+    created_at: datetime
+    updated_by: UUID4 | None = None
+    updated_at: datetime | None = None
 
 
 class MemberCreate(MemberBase):
