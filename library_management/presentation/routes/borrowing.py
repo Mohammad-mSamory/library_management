@@ -12,6 +12,15 @@ router = APIRouter()
 book_repo = BookRepository()
 book_service = BookService(book_repo)
 
+@router.post("/return/{book_id}")
+def return_book(book_id: UUID):
+    try:
+        book_service.return_book(book_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"detail": "Book returned successfully."}
+
+
 
 @router.post("/{book_id}/{member_id}")
 def borrow_book(book_id: UUID, member_id: UUID):
@@ -22,10 +31,3 @@ def borrow_book(book_id: UUID, member_id: UUID):
     return {"detail": "Book borrowed successfully."}
 
 
-@router.post("/return/{book_id}")
-def return_book(book_id: UUID):
-    try:
-        book_service.return_book(book_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    return {"detail": "Book returned successfully."}
