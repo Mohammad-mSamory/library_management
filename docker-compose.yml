@@ -7,7 +7,7 @@ services:
     image: library
     container_name: library-base
     volumes:  # this to bind from local dir to container dir / ask more about this 
-      - ./src:/app/src:rw
+      - ./library_management:/app/src:rw
     environment:
       - DB_HOST=library-postgres
       - DB_NAME=library_management
