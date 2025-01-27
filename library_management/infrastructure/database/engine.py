@@ -16,10 +16,3 @@ engine = create_engine(get_db_url())
 metadata = MetaData()
 
 
-try:
-    # Try connecting to the database
-    connection = engine.connect()
-    print("Connection successful!")
-    connection.close()
-except OperationalError as e:
-    print(f"Error connecting to the database: {e}")
