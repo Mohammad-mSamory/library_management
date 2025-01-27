@@ -7,6 +7,7 @@ from library_management.infrastructure.database.engine import engine
 
 class DatabaseError(Exception):
     """Custom exception for database-related errors."""
+
     def __init__(self, message="An error occurred with the database operation"):
         self.message = message
         super().__init__(self.message)
@@ -42,7 +43,8 @@ class BaseRepository:
                 result = conn.execute(stmt)
                 return self._convert_to_entity(result.fetchone())
         except SQLAlchemyError as e:
-            raise DatabaseError(f"Failed to retrieve entity with ID {entity_id}: {e}")
+            raise DatabaseError(
+                f"Failed to retrieve entity with ID {entity_id}: {e}")
 
     def list_all(self):
         try:
@@ -78,7 +80,8 @@ class BaseRepository:
                 conn.execute(stmt)
                 conn.commit()
         except SQLAlchemyError as e:
-            raise DatabaseError(f"Failed to delete entity with ID {entity_id}: {e}")
+            raise DatabaseError(
+                f"Failed to delete entity with ID {entity_id}: {e}")
 
 
 class BookRepository(BaseRepository):
