@@ -26,5 +26,3 @@ members_table = Table(
     Column("email", String, nullable=False, unique=True),
 )
 
-
-metadata.create_all(engine)
